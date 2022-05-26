@@ -1,0 +1,174 @@
+import React, { useEffect, useRef, useState } from 'react';
+import './App.css';
+import Peer from 'peerjs';
+import Room from './service/Room';
+
+function App() {
+  const [message, setMessage] = useState("");
+  const [clientName, setClientName] = useState("N/A");
+  const [history, _setHistory] = useState([]);
+  const historyRef = useRef([]);
+  const connectedClients = useRef([]);
+
+  const room = useRef();
+  const client = useRef();
+  const lastRoomConnection = useRef();
+
+  useEffect(() => {
+    setClientName(makeid(5));
+  }, [])
+
+  function setHistory(data) {
+    historyRef.current = data;
+    _setHistory(data);
+  }
+
+  function addMessageToHistory(message) {
+    console.log(message)
+    setHistory([...historyRef.current, message]);
+  }
+
+  function createRoom() {
+    room.current = Room({
+      roomId: "room-id",
+      debug: true,
+    })
+    room.current = new Peer("room-id", { debug: 2 });
+    room.current.on('open', function (id) {
+      addMessageToHistory("Room created " + id);
+    });
+    room.current.on('connection', function (connection) {
+      addMessageToHistory("Someone joined the room " + connection.peer);
+      lastRoomConnection.current = connection;
+      connectedClients.current.push(connection);
+
+      const { userName } = connection.metadata || {};
+      connection.on("data", (data) => {
+        addMessageToHistory(userName + ": " + JSON.stringify(data));
+        broadcast(data, connection.peer);
+      });
+      connection.on("open", () => {
+        addMessageToHistory("1- " + userName + ": Peer connection opened")
+        connection.send("Welcome the room");
+      });
+      connection.on('error', function (err) {
+        console.log(err);
+      });
+    });
+    room.current.on('disconnected', function () {
+      console.log('Room connection lost. Please reconnect');
+    });
+    room.current.on('close', function () {
+      lastRoomConnection.current = null;
+      console.log('Connection destroyed');
+    });
+    room.current.on('error', function (err) {
+      console.log(err);
+    });
+  }
+
+  function createClientAndConnect() {
+    client.current = new Peer(null, { debug: 2 });
+    client.current.on('open', function (id) {
+      addMessageToHistory("Client created " + id);
+      connectToRoom();
+    });
+    client.current.on('connection', function (connection) {
+      const { userName } = connection.metadata || {};
+      connection.on("data", (data) => {
+        addMessageToHistory("2- " + userName + ": " + JSON.stringify(data));
+      });
+      addMessageToHistory("Someone connected to this client" + userName);
+      connection.send("This message sent from client. A");
+    });
+    client.current.on('disconnected', function () {
+      console.log('Client connection lost. Please reconnect');
+    });
+    client.current.on('close', function () {
+      console.log('Connection destroyed');
+    });
+    client.current.on('error', function (err) {
+      console.log(err);
+    });
+
+  }
+
+  function connectToRoom() {
+    const clientCon = client.current.connect("room-id", { metadata: { userName: clientName } });
+    clientCon.on('open', function (id) {
+      addMessageToHistory("Client and room connection is opened " + id)
+
+      clientCon.send("This message sent from client. Hi ");
+      clientCon.on("data", (data) => {
+        // Will print 'hi!'
+        addMessageToHistory("3- " + "YOK" + ": " + JSON.stringify(data));
+      });
+    });
+    clientCon.on('connection', function (connection) {
+      addMessageToHistory("Client connected to room " + connection.peer);
+      clientCon.send("This message sent from client. Hi ");
+    });
+    clientCon.on('disconnected', function () {
+      console.log('Client-Room connection lost. Please reconnect');
+    });
+    clientCon.on('close', function () {
+      console.log('Client-Room connection destroyed');
+    });
+    clientCon.on('error', function (err) {
+      console.log(err);
+    });
+    lastRoomConnection.current = clientCon;
+  }
+
+  window.app = { room, client, lastRoomConnection, createRoom, createClientAndConnect }
+
+
+
+
+  function handleMessageChange(event) {
+    setMessage(event.target.value);
+  }
+
+  function sendMessage() {
+    lastRoomConnection.current.send(message);
+    addMessageToHistory("You: " + message);
+    setMessage("");
+  }
+
+
+  function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() *
+        charactersLength));
+    }
+    return result;
+  }
+
+  return (
+    <div className="App">
+      <h1>hello {clientName}</h1>
+      <button onClick={createRoom}>Create Room</button>
+      <button onClick={createClientAndConnect}>Join Room</button>
+      <br></br>
+      <div>
+        <ul>
+          {history.map(item => {
+            return (<li>
+              {item}
+            </li>)
+          })}
+        </ul>
+
+      </div>
+
+      <input onChange={handleMessageChange} value={message} />
+      <button onClick={sendMessage}>Send Message</button>
+
+    </div>
+  );
+}
+
+export default App;
