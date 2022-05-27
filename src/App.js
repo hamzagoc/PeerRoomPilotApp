@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
-import Room from './service/Room';
-import Client from './service/Client';
+import Room from './PeerRoom/service/Room';
+import Client from './PeerRoom/service/Client';
 import { makeid } from './util/Util';
 
 function App() {
