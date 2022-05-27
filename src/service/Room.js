@@ -8,6 +8,7 @@ function Room({
     onClientConnectedToRoom = (connection) => { },
     onConnectionOpenedToClient = (connection) => { },
     onMessage = (connection, data) => { },
+    onRoomReady = () => { },
     onBroadcast
 }) {
     var connectedClients = [];
@@ -23,6 +24,7 @@ function Room({
     }
 
     function handleOpen(id) {
+        onRoomReady(id);
         log("Room created " + id);
     }
 

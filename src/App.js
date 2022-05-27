@@ -31,6 +31,9 @@ function App() {
     room.current = Room({
       roomId: "room-id",
       debug: true,
+      onRoomReady: (id) => {
+        addMessageToHistory("Room created: " + id);
+      },
       onMessage: (connection, data) => {
         const { username } = connection.metadata || {};
         addMessageToHistory(username + ": " + JSON.stringify(data));
@@ -50,6 +53,9 @@ function App() {
       debug: true,
       onClientReady: (id) => {
         client.current.connectToRoom("room-id");
+      },
+      onJoinTheRoom: () => {
+        addMessageToHistory("You joined the room");
       },
       onMessage: (connection, d) => {
         const { username, data } = d;

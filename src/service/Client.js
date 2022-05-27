@@ -4,6 +4,7 @@ function Client({
     username,
     debug,
     onClientReady = (id) => { },
+    onJoinTheRoom = () => { },
     onMessage = (connection, data) => { }
 }) {
     var client;
@@ -46,8 +47,9 @@ function Client({
 
     function connectToRoom(roomId) {
         clientToRoomCon = client.connect(roomId, { metadata: { username } });
-        clientToRoomCon.on('open', function (id) {
-            log("ClientToRoom connection is opened " + id);
+        clientToRoomCon.on('open', function () {
+            log("ClientToRoom connection is opened");
+            onJoinTheRoom();
             clientToRoomCon.on("data", (data) => {
                 log("Message from room: " + JSON.stringify(data));
                 onMessage(clientToRoomCon, data);
