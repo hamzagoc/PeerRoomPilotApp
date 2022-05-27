@@ -7,7 +7,7 @@ function Room({
     debug,
     onClientConnectedToRoom = (connection) => { },
     onConnectionOpenedToClient = (connection) => { },
-    onMessage = (connection, data) => { },
+    onDataReceived = (connection, data) => { },
     onRoomReady = () => { },
     onBroadcast
 }) {
@@ -47,7 +47,7 @@ function Room({
         connection.on("data", (data) => {
             log("Message from client:" + connection.peer + "\tData: " + JSON.stringify(data))
             const { username } = connection.metadata || {};
-            onMessage(connection, data);
+            onDataReceived(connection, data);
             broadcast(BroadcastMessage({ username, data }), connection.peer);
         });
         connection.on("open", () => {

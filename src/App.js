@@ -34,7 +34,7 @@ function App() {
       onRoomReady: (id) => {
         addMessageToHistory("Room created: " + id);
       },
-      onMessage: (connection, data) => {
+      onDataReceived: (connection, data) => {
         const { username } = connection.metadata || {};
         addMessageToHistory(username + ": " + JSON.stringify(data));
       },
@@ -57,7 +57,7 @@ function App() {
       onJoinTheRoom: () => {
         addMessageToHistory("You joined the room");
       },
-      onMessage: (connection, d) => {
+      onDataReceived: (connection, d) => {
         const { username, data } = d;
         const msg = username ? username + ": " + JSON.stringify(data) : JSON.stringify(data);
         addMessageToHistory(msg);

@@ -5,7 +5,7 @@ function Client({
     debug,
     onClientReady = (id) => { },
     onJoinTheRoom = () => { },
-    onMessage = (connection, data) => { }
+    onDataReceived = (connection, data) => { }
 }) {
     var client;
     var clientToRoomCon;
@@ -52,7 +52,7 @@ function Client({
             onJoinTheRoom();
             clientToRoomCon.on("data", (data) => {
                 log("Message from room: " + JSON.stringify(data));
-                onMessage(clientToRoomCon, data);
+                onDataReceived(clientToRoomCon, data);
             });
         });
 
