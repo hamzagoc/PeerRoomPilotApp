@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Room from '../PeerRoom/service/Room';
 import Client from '../PeerRoom/service/Client';
 import { makeid } from '../util/Util';
+import SIGNAL from '../PeerRoom/model/Signal';
 
 function ExampleRoom() {
     const [isRoom, setIsRoom] = useState(false);
@@ -25,7 +26,6 @@ function ExampleRoom() {
     }
 
     function addMessageToHistory(message) {
-        console.log(message);
         setHistory([...historyRef.current, message]);
     }
 
@@ -44,7 +44,6 @@ function ExampleRoom() {
             onClientConnectedToRoom: (connection) => {
                 const { username } = connection.metadata || {};
                 addMessageToHistory(username + " joined the room.");
-                room.current.broadcast({ data: username + " joined the room." })
             }
         });
         room.current.init();
@@ -62,9 +61,22 @@ function ExampleRoom() {
                 addMessageToHistory("You joined the room");
             },
             onDataReceived: (connection, d) => {
-                const { username, data } = d;
-                const msg = username ? username + ": " + JSON.stringify(data) : JSON.stringify(data);
-                addMessageToHistory(msg);
+                const { metadata, data, signal } = d;
+                const { username } = metadata;
+                switch (signal) {
+                    case SIGNAL.DATA:
+                        const msg = username + ": " + JSON.stringify(data);
+                        addMessageToHistory(msg);
+                        break;
+                    case SIGNAL.JOIN:
+                        addMessageToHistory(username + " joined the room");
+                        break;
+                    case SIGNAL.LEAVE:
+                        addMessageToHistory(username + " left the room");
+                        break;
+                    default:
+                        console.log("Unhandled signal: " + signal);
+                }
             }
         });
         client.current.init();

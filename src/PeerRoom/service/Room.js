@@ -1,6 +1,7 @@
 
 import Peer from 'peerjs';
 import BroadcastMessage from '../model/BroadcastMessage';
+import SIGNAL from '../model/Signal';
 
 function Room({
     roomId,
@@ -42,17 +43,22 @@ function Room({
 
     function handleConnection(connection) {
         log("Someone joined the room " + connection.peer);
+        const { metadata } = connection || {};
         onClientConnectedToRoom(connection);
         connectedClients.push(connection);
         connection.on("data", (data) => {
             log("Message from client:" + connection.peer + "\tData: " + JSON.stringify(data))
-            const { username } = connection.metadata || {};
+            broadcast(BroadcastMessage({ metadata, signal: SIGNAL.DATA, data }), connection.peer);
             onDataReceived(connection, data);
-            broadcast(BroadcastMessage({ username, data }), connection.peer);
         });
         connection.on("open", () => {
+            log("Room connected to client for messaging")
+            broadcast(BroadcastMessage({ metadata, signal: SIGNAL.JOIN }), connection.peer);
             onConnectionOpenedToClient(connection);
-            log("Room connected to peer for messaging")
+        });
+        connection.on("close", () => {
+            log("Client connection closed")
+            broadcast(BroadcastMessage({ metadata , signal: SIGNAL.LEAVE }), connection.peer);
         });
         connection.on('error', function (err) {
             log(err);

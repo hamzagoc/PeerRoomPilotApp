@@ -1,6 +1,7 @@
-function BroadcastMessage({ username, data }) {
+function BroadcastMessage({ metadata, signal, data }) {
     return {
-        username,
+        metadata,
+        signal,
         data,
     }
 }
