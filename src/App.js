@@ -1,13 +1,14 @@
 import React from 'react';
 import './App.css';
 import ExampleRoom from './ExampleRoom/ExampleRoom';
-import { GameLoby } from './Game/components';
+import DashBoard from './Game/BoardGame/Dixit/pages/Dashboard';
+import 'antd/dist/antd.min.css';
 
 function App() {
 
   return (
     <div className="App">
-      <GameLoby />
+      <DashBoard />
     </div>
   );
 }
