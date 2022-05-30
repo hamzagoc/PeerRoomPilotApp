@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, Button } from "antd";
 import { AvatarColors, AvatarIcon } from "../../constants";
 import { ArrowLeftOutlined, ArrowRightOutlined, BgColorsOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 
-const AvatarSelector = ({ name }) => {
+const AvatarSelector = ({ name, onAvatarChange }) => {
     const iconKeys = Object.keys(AvatarIcon);
-    const [selectedAvatar] = useState(getRandomAvatar());
+    const [selectedAvatar, setSelectedAvatar] = useState(getRandomAvatar());
     const [avatarIndex, setAvatarIndex] = useState(0);
     const [selectedColor, setSelectedColor] = useState(getRandomColor());
+
+    useEffect(() => {
+        onAvatarChange({ icon: selectedAvatar, color: selectedColor })
+    }, []);
+
+    useEffect(() => {
+        onAvatarChange({ icon: selectedAvatar, color: selectedColor })
+    }, [selectedAvatar, selectedColor]);
 
     function getRandomAvatar() {
         const avatarIndex = randomNumber(iconKeys.length - 1);
@@ -25,22 +33,15 @@ const AvatarSelector = ({ name }) => {
     }
 
     function handlePreviousAvatar() {
-        const index = avatarIndex - 1;
-        if (index < 0) {
-            setAvatarIndex(iconKeys.length - 1);
-
-        } else {
-            setAvatarIndex(index);
-        }
+        const index = avatarIndex <= 0 ? iconKeys.length - 1 : avatarIndex - 1;
+        setSelectedAvatar(AvatarIcon[iconKeys[avatarIndex]])
+        setAvatarIndex(index);
     }
 
     function handleNextAvatar() {
-        const index = avatarIndex + 1;
-        if (index > iconKeys.length - 1) {
-            setAvatarIndex(0);
-        } else {
-            setAvatarIndex(index);
-        }
+        const index = avatarIndex >= iconKeys.length - 1 ? 0 : avatarIndex + 1;
+        setSelectedAvatar(AvatarIcon[iconKeys[avatarIndex]])
+        setAvatarIndex(index);
     }
 
     function handleRandomColor() {

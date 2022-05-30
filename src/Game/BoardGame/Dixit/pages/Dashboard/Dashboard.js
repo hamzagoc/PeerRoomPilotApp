@@ -7,6 +7,7 @@ import AvatarSelector from '../../../../components/AvatarSelector';
 function DashBoard() {
     const [activeTabKey, setActiveTabKey] = useState(TABS.CREATE_ROOM);
     const [username, setUsername] = useState("")
+    const [avatar, setAvatar] = useState({})
 
     useEffect(() => {
         console.log("Created");
@@ -20,6 +21,11 @@ function DashBoard() {
         setUsername(e.target.value);
     }
 
+    const handleAvatarChange = (data) => {
+        console.log(data);
+        setAvatar(data);
+    }
+
     return (
         <Container>
             <Tabs defaultActiveKey={activeTabKey} onChange={handleOnChange}>
@@ -29,7 +35,7 @@ function DashBoard() {
 
             <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
                 <UserDetail>
-                    <AvatarSelector name={username} />
+                    <AvatarSelector name={username} onAvatarChange={handleAvatarChange} />
                     <ActionGroup>
                         <Input placeholder="Username" value={username} onChange={handleUsernameChange} />
                         <div>
