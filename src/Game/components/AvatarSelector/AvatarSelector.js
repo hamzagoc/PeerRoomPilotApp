@@ -4,23 +4,19 @@ import { AvatarColors, AvatarIcon } from "../../constants";
 import { ArrowLeftOutlined, ArrowRightOutlined, BgColorsOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 
+const iconKeys = Object.keys(AvatarIcon);
+
 const AvatarSelector = ({ name, onAvatarChange }) => {
-    const iconKeys = Object.keys(AvatarIcon);
-    const [selectedAvatar, setSelectedAvatar] = useState(getRandomAvatar());
-    const [avatarIndex, setAvatarIndex] = useState(0);
+    const [avatarIndex, setAvatarIndex] = useState(getRandomAvatarIndex());
     const [selectedColor, setSelectedColor] = useState(getRandomColor());
 
     useEffect(() => {
-        onAvatarChange({ icon: selectedAvatar, color: selectedColor })
-    }, []);
+        const avatarKey = iconKeys[avatarIndex];
+        onAvatarChange({ avatar: avatarKey, color: selectedColor })
+    }, [avatarIndex, selectedColor]);
 
-    useEffect(() => {
-        onAvatarChange({ icon: selectedAvatar, color: selectedColor })
-    }, [selectedAvatar, selectedColor]);
-
-    function getRandomAvatar() {
-        const avatarIndex = randomNumber(iconKeys.length - 1);
-        return AvatarIcon[iconKeys[avatarIndex]];
+    function getRandomAvatarIndex() {
+        return randomNumber(iconKeys.length - 1)
     }
 
     function getRandomColor() {
@@ -34,13 +30,11 @@ const AvatarSelector = ({ name, onAvatarChange }) => {
 
     function handlePreviousAvatar() {
         const index = avatarIndex <= 0 ? iconKeys.length - 1 : avatarIndex - 1;
-        setSelectedAvatar(AvatarIcon[iconKeys[avatarIndex]])
         setAvatarIndex(index);
     }
 
     function handleNextAvatar() {
         const index = avatarIndex >= iconKeys.length - 1 ? 0 : avatarIndex + 1;
-        setSelectedAvatar(AvatarIcon[iconKeys[avatarIndex]])
         setAvatarIndex(index);
     }
 
@@ -50,7 +44,7 @@ const AvatarSelector = ({ name, onAvatarChange }) => {
 
     return (
         <AvatarSelectorContainer>
-            <Avatar style={{ backgroundColor: selectedColor }} icon={selectedAvatar} size={50} />
+            <Avatar style={{ backgroundColor: selectedColor }} icon={AvatarIcon[iconKeys[avatarIndex]]} size={50} />
             <span>{name || (<span style={{ color: 'gray' }}>Username</span>)}</span>
             <SelectorButtons>
                 <Button type="primary" shape="circle" size="small" icon={<ArrowLeftOutlined />} onClick={handlePreviousAvatar} />

@@ -82,7 +82,7 @@ const Container = styled.div`
 const ActionGroup = styled.div`
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around;
 `;
 
 const UserDetail = styled.div`
