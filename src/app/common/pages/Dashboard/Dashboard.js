@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Input, Button, Space } from 'antd';
+import { Tabs, Input, Button } from 'antd';
 import { AppstoreOutlined, TeamOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import AvatarSelector from '../../components/AvatarSelector';
@@ -39,7 +39,7 @@ function DashBoard() {
                 <ActionGroup>
                     <Input placeholder="Username" value={username} onChange={handleUsernameChange} />
                     <div>
-                        <Link to="loby">
+                        <Link to="dixit/roomcreate">
                             <Button type="primary" style={{ float: 'right' }}>
                                 {activeTabKey === TABS.CREATE_ROOM ? "Create Room" : "Join Room"}
                             </Button>

@@ -1,4 +1,5 @@
-import GameLoby from "./GameLoby";
-import GameRoom from "./GameRoom";
+import AvatarSelector from "./AvatarSelector";
 
-export { GameLoby, GameRoom }
+export {
+    AvatarSelector,
+}
