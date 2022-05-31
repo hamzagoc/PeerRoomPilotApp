@@ -28,24 +28,22 @@ function DashBoard() {
 
     return (
         <Container>
-            <Tabs defaultActiveKey={activeTabKey} onChange={handleOnChange}>
+            <Tabs defaultActiveKey={activeTabKey} onChange={handleOnChange} size='large' centered>
                 <Tabs.TabPane key={TABS.CREATE_ROOM} tab={<CreateRoomTab />} />
                 <Tabs.TabPane key={TABS.JOIN_ROOM} tab={<JoinRoomTab />} />
             </Tabs>
 
-            <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                <UserDetail>
-                    <AvatarSelector name={username} onAvatarChange={handleAvatarChange} />
-                    <ActionGroup>
-                        <Input placeholder="Username" value={username} onChange={handleUsernameChange} />
-                        <div>
-                            <Button type="primary" style={{ float: 'right' }}>
-                                {activeTabKey === TABS.CREATE_ROOM ? "Create Room" : "Join Room"}
-                            </Button>
-                        </div>
-                    </ActionGroup>
-                </UserDetail>
-            </Space>
+            <UserDetail>
+                <AvatarSelector name={username} onAvatarChange={handleAvatarChange} />
+                <ActionGroup>
+                    <Input placeholder="Username" value={username} onChange={handleUsernameChange} />
+                    <div>
+                        <Button type="primary" style={{ float: 'right' }}>
+                            {activeTabKey === TABS.CREATE_ROOM ? "Create Room" : "Join Room"}
+                        </Button>
+                    </div>
+                </ActionGroup>
+            </UserDetail>
         </Container>
     );
 }
@@ -76,7 +74,7 @@ const JoinRoomTab = () => {
 
 const Container = styled.div`
     margin: auto;
-    max-width: 500px;
+    max-width: 400px;
     padding: 100px 20px;
 `;
 const ActionGroup = styled.div`
@@ -88,6 +86,7 @@ const ActionGroup = styled.div`
 const UserDetail = styled.div`
     display: flex;
     gap: 36px;
+    justify-content: center;
 `;
 
 
