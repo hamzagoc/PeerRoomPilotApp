@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Room from '../PeerRoom/service/Room';
-import Client from '../PeerRoom/service/Client';
-import { makeid } from '../util/Util';
-import SIGNAL from '../PeerRoom/model/Signal';
+import Room from '../service/Room';
+import Client from '../service/Client';
+import { makeid } from '../../util/Util';
+import SIGNAL from '../model/Signal';
 
 function ExampleRoom() {
     const [isRoom, setIsRoom] = useState(false);

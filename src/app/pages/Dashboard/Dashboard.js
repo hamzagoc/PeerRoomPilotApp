@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Tabs, Input, Button, Space } from 'antd';
 import { AppstoreOutlined, TeamOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
-import AvatarSelector from '../../../../components/AvatarSelector';
+import AvatarSelector from '../../components/AvatarSelector';
 import { Link } from "react-router-dom";
 
 function DashBoard() {
