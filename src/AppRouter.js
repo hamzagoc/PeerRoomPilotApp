@@ -4,8 +4,8 @@ import {
     Routes,
     Route,
 } from "react-router-dom";
-import DashBoard from './app/pages/Dashboard';
-import Loby from './app/pages/Loby';
+import DashBoard from './app/common/pages/Dashboard';
+import Loby from './app/common/pages/Loby';
 
 function AppRouter() {
     return (
