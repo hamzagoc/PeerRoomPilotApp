@@ -3,6 +3,7 @@ import { Tabs, Input, Button, Space } from 'antd';
 import { AppstoreOutlined, TeamOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import AvatarSelector from '../../../../components/AvatarSelector';
+import { Link } from "react-router-dom";
 
 function DashBoard() {
     const [activeTabKey, setActiveTabKey] = useState(TABS.CREATE_ROOM);
@@ -38,9 +39,12 @@ function DashBoard() {
                 <ActionGroup>
                     <Input placeholder="Username" value={username} onChange={handleUsernameChange} />
                     <div>
-                        <Button type="primary" style={{ float: 'right' }}>
-                            {activeTabKey === TABS.CREATE_ROOM ? "Create Room" : "Join Room"}
-                        </Button>
+                        <Link to="loby">
+                            <Button type="primary" style={{ float: 'right' }}>
+                                {activeTabKey === TABS.CREATE_ROOM ? "Create Room" : "Join Room"}
+                            </Button>
+                        </Link>
+
                     </div>
                 </ActionGroup>
             </UserDetail>
