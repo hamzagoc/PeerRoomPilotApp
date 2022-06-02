@@ -7,7 +7,7 @@ function Room({
     roomId,
     debug,
     onClientConnectedToRoom = (connection) => { },
-    onConnectionOpenedToClient = (connection) => { },
+    onClientConnectionClosed = (connection) => { },
     onDataReceived = (connection, data) => { },
     onRoomReady = () => { },
     onBroadcast
@@ -44,21 +44,22 @@ function Room({
     function handleConnection(connection) {
         log("Someone joined the room " + connection.peer);
         const { metadata } = connection || {};
-        onClientConnectedToRoom(connection);
-        connectedClients.push(connection);
         connection.on("data", (data) => {
             log("Message from client:" + connection.peer + "\tData: " + JSON.stringify(data))
             broadcast(BroadcastMessage({ metadata, signal: SIGNAL.DATA, data }), connection.peer);
             onDataReceived(connection, data);
         });
         connection.on("open", () => {
+            connectedClients = [...connectedClients, connection];
             log("Room connected to client for messaging")
             broadcast(BroadcastMessage({ metadata, signal: SIGNAL.JOIN }), connection.peer);
-            onConnectionOpenedToClient(connection);
+            onClientConnectedToRoom(connection);
         });
         connection.on("close", () => {
             log("Client connection closed")
-            broadcast(BroadcastMessage({ metadata , signal: SIGNAL.LEAVE }), connection.peer);
+            connectedClients = connectedClients.filter(client => client.peer != connection.peer)
+            broadcast(BroadcastMessage({ metadata, signal: SIGNAL.LEAVE }), connection.peer);
+            onClientConnectionClosed(connection);
         });
         connection.on('error', function (err) {
             log(err);
@@ -82,11 +83,23 @@ function Room({
         })
     }
 
+    function broadcastState(metadata, signal, data) {
+        const message = BroadcastMessage({ metadata, signal, data });
+        connectedClients.forEach(conn => {
+            conn.send(message);
+        })
+    };
+
     function log(message) {
         if (debug)
             console.log(message)
     }
-    return { connectedClients, init, broadcast };
+
+    function getConnectedClients(){
+        return connectedClients;
+    }
+
+    return { connectedClients, init, broadcast, broadcastState, getConnectedClients };
 }
 
 

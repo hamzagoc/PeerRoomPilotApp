@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Tabs, Input, Button } from 'antd';
+import React, { useState } from 'react';
+import { Tabs, Button } from 'antd';
 import { AppstoreOutlined, TeamOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import AvatarSelector from '../../components/AvatarSelector';
@@ -7,24 +7,9 @@ import { Link } from "react-router-dom";
 
 function DashBoard() {
     const [activeTabKey, setActiveTabKey] = useState(TABS.CREATE_ROOM);
-    const [username, setUsername] = useState("")
-    const [avatar, setAvatar] = useState({})
-
-    useEffect(() => {
-        console.log("Created");
-    }, []);
 
     const handleOnChange = (activeTab) => {
         setActiveTabKey(activeTab);
-    }
-
-    const handleUsernameChange = (e) => {
-        setUsername(e.target.value);
-    }
-
-    const handleAvatarChange = (data) => {
-        console.log(data);
-        setAvatar(data);
     }
 
     return (
@@ -35,9 +20,8 @@ function DashBoard() {
             </Tabs>
 
             <UserDetail>
-                <AvatarSelector name={username} onAvatarChange={handleAvatarChange} />
+                <AvatarSelector />
                 <ActionGroup>
-                    <Input placeholder="Username" value={username} onChange={handleUsernameChange} />
                     <div>
                         <Link to="dixit/roomcreate">
                             <Button type="primary" style={{ float: 'right' }}>

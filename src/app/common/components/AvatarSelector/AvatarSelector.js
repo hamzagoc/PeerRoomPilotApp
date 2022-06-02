@@ -1,22 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Button } from "antd";
+import { Avatar, Button, Input } from "antd";
 import { AvatarColors, AvatarIcon } from "../../constants";
-import { ArrowLeftOutlined, ArrowRightOutlined, BgColorsOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, ArrowRightOutlined, BgColorsOutlined, EditOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import { useLocalStorage } from '../../hooks';
 
 const iconKeys = Object.keys(AvatarIcon);
+const { Group: InputGroup } = Input;
 
-const AvatarSelector = ({ name, onAvatarChange }) => {
-    const [avatarIndex, setAvatarIndex] = useState(getRandomAvatarIndex());
-    const [selectedColor, setSelectedColor] = useState(getRandomColor());
+const AvatarSelector = ({ hideActions }) => {
+    const [userCredentials, setUserCredentials] = useLocalStorage("userCredentials", {});
+    const { username: storedUserName, avatar: storedAvatar } = userCredentials;
+    const [avatarIndex, setAvatarIndex] = useState(getInitialAvatarIndex());
+    const [selectedColor, setSelectedColor] = useState(getInitialColor());
+    const [username, setUsername] = useState(storedUserName);
+    const [isEditModeUsername, setIsEditModeUsername] = useState(false);
 
     useEffect(() => {
         const avatarKey = iconKeys[avatarIndex];
-        onAvatarChange({ avatar: avatarKey, color: selectedColor })
+        setUserCredentials({ username, avatar: { key: avatarKey, color: selectedColor } })
     }, [avatarIndex, selectedColor]);
 
-    function getRandomAvatarIndex() {
-        return randomNumber(iconKeys.length - 1)
+    function getInitialAvatarIndex() {
+        const { key } = storedAvatar || {};
+        const index = iconKeys.indexOf(key);
+        return index < 0 ? randomNumber(iconKeys.length - 1) : index;
+    }
+
+    function getInitialColor() {
+        const { color } = storedAvatar || {};
+        const index = AvatarColors.indexOf(color);
+        return index < 0 ? getRandomColor() : AvatarColors[index];
     }
 
     function getRandomColor() {
@@ -42,18 +56,54 @@ const AvatarSelector = ({ name, onAvatarChange }) => {
         setSelectedColor(getRandomColor());
     }
 
+    function handleUsernameChange(e) {
+        setUsername(e.target.value)
+    }
+
+    function handleEditUserName() {
+        setIsEditModeUsername(mode => !mode);
+        if (username) {
+            setUserCredentials({ ...userCredentials, username });
+        }
+    }
+
     return (
         <AvatarSelectorContainer>
             <Avatar style={{ backgroundColor: selectedColor }} icon={AvatarIcon[iconKeys[avatarIndex]]} size={50} />
-            <span>{name || (<span style={{ color: 'gray' }}>Username</span>)}</span>
-            <SelectorButtons>
+            {
+                !isEditModeUsername
+                    ? (<span>
+                        {
+                            username || <span style={{ color: 'gray' }}> Username </span>
+                        }
+                        <Button icon={<EditOutlined onClick={handleEditUserName} />} size="small" type='link' />
+                    </span>)
+                    : (
+                        <UsernameInputContainer compact>
+                            <Input
+                                placeholder="Username"
+                                value={username}
+                                size="small"
+                                onChange={handleUsernameChange}
+                            />
+                            <Button icon={<CheckCircleOutlined onClick={handleEditUserName} />} size="small" />
+                        </UsernameInputContainer>)
+            }
+            {hideActions && <SelectorButtons>
                 <Button type="primary" shape="circle" size="small" icon={<ArrowLeftOutlined />} onClick={handlePreviousAvatar} />
                 <Button type="primary" shape="circle" size="small" icon={<ArrowRightOutlined />} onClick={handleNextAvatar} />
                 <Button type="primary" shape="circle" size="small" icon={<BgColorsOutlined />} onClick={handleRandomColor} />
-            </SelectorButtons>
-        </AvatarSelectorContainer>
+            </SelectorButtons>}
+        </AvatarSelectorContainer >
     )
 };
+
+
+const UsernameInputContainer = styled(InputGroup)`
+    display:flex !important;
+    max-width:150px;
+`;
+
 
 const AvatarSelectorContainer = styled.div`
     display: flex;

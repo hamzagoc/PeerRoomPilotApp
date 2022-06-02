@@ -1,14 +1,16 @@
 import Peer from 'peerjs';
 
 function Client({
-    username,
+    metadata,
     debug,
     onClientReady = (id) => { },
     onJoinTheRoom = () => { },
-    onDataReceived = (connection, data) => { }
+    onDataReceived = (connection, data) => { },
+    onRoomClose = () => { },
+    onError = (err) => { }
 }) {
     var client;
-    var clientToRoomCon;
+    var clientToRoomCon; 
 
     function init() {
         client = new Peer(null, { debug: 2 });
@@ -34,6 +36,7 @@ function Client({
     }
 
     function handleError(err) {
+        onError(err);
         log(err);
     }
 
@@ -46,7 +49,7 @@ function Client({
     }
 
     function connectToRoom(roomId) {
-        clientToRoomCon = client.connect(roomId, { metadata: { username } });
+        clientToRoomCon = client.connect(roomId, { debug: 2, metadata });
         clientToRoomCon.on('open', function () {
             log("ClientToRoom connection is opened");
             onJoinTheRoom();
@@ -64,6 +67,7 @@ function Client({
         });
         clientToRoomCon.on('close', function () {
             log('ClientToRoom connection destroyed');
+            onRoomClose();
         });
         clientToRoomCon.on('error', function (err) {
             log(err);
@@ -79,7 +83,12 @@ function Client({
             console.log(message)
     }
 
-    return { username, init, connectToRoom, sendMessage }
+    function getId() {
+        const { id } = client || {};
+        return id;
+    }
+    
+    return { metadata, getId, init, connectToRoom, sendMessage }
 }
 
 export default Client;
