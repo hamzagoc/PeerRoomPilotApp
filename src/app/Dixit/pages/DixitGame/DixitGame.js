@@ -4,10 +4,11 @@ import { makeid } from "../../../../util/Util";
 import Room from '../../../../PeerRoom/service/Room';
 import Client from '../../../../PeerRoom/service/Client';
 import SIGNAL from '../../../../PeerRoom/model/Signal';
-import { Spin, message } from "antd";
+import { Spin, message, List } from "antd";
 import styled from 'styled-components';
 import { PeerJsError } from "../../../../PeerRoom/constants";
 import { useLocalStorage, useStateWithRef } from "../../../common/hooks";
+import AvatarSelector from "../../../common/components/AvatarSelector/AvatarSelector";
 
 function DixitGame() {
     const { roomname: roomNameParam } = useParams();
@@ -176,9 +177,11 @@ function DixitGame() {
                 <>
                     <h1>Dixit Game - {roomName}</h1>
                     <h3>User Count - {userList.length}</h3>
-                    {userList.map(u => {
-                        return <div key={u.peerId}>{JSON.stringify(u)} {u.peerId === hostId ? '--- HOST' : ''} {u.peerId === coHostId ? '--- Co-Host' : ''}</div>
-                    })}
+                    <List
+                        grid={{ gutter: 24, justifyContent: 'center' }}
+                        dataSource={userList}
+                        renderItem={user => (<List.Item key={user.peerId}><AvatarSelector user={user} viewMode /></List.Item>)}
+                    />
                     <hr />
                     {JSON.stringify(gameState)}
                     <button onClick={handleSendMessage} > Mesaj Gönder </button>

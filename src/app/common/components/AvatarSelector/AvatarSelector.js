@@ -8,9 +8,9 @@ import { useLocalStorage } from '../../hooks';
 const iconKeys = Object.keys(AvatarIcon);
 const { Group: InputGroup } = Input;
 
-const AvatarSelector = ({ hideActions }) => {
+const AvatarSelector = ({ user, viewMode }) => {
     const [userCredentials, setUserCredentials] = useLocalStorage("userCredentials", {});
-    const { username: storedUserName, avatar: storedAvatar } = userCredentials;
+    const { username: storedUserName, avatar: storedAvatar } = viewMode ? user : userCredentials;
     const [avatarIndex, setAvatarIndex] = useState(getInitialAvatarIndex());
     const [selectedColor, setSelectedColor] = useState(getInitialColor());
     const [username, setUsername] = useState(storedUserName);
@@ -76,7 +76,7 @@ const AvatarSelector = ({ hideActions }) => {
                         {
                             username || <span style={{ color: 'gray' }}> Username </span>
                         }
-                        <Button icon={<EditOutlined onClick={handleEditUserName} />} size="small" type='link' />
+                        {!viewMode && <Button icon={<EditOutlined onClick={handleEditUserName} />} size="small" type='link' />}
                     </span>)
                     : (
                         <UsernameInputContainer compact>
@@ -89,7 +89,7 @@ const AvatarSelector = ({ hideActions }) => {
                             <Button icon={<CheckCircleOutlined onClick={handleEditUserName} />} size="small" />
                         </UsernameInputContainer>)
             }
-            {hideActions && <SelectorButtons>
+            {!viewMode && <SelectorButtons>
                 <Button type="primary" shape="circle" size="small" icon={<ArrowLeftOutlined />} onClick={handlePreviousAvatar} />
                 <Button type="primary" shape="circle" size="small" icon={<ArrowRightOutlined />} onClick={handleNextAvatar} />
                 <Button type="primary" shape="circle" size="small" icon={<BgColorsOutlined />} onClick={handleRandomColor} />
