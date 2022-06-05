@@ -1,8 +1,8 @@
-import AvatarDetail from "./AvatarDetail"
-import GameState from "./GameState"
-import UserCredentials from "./UserCredentials"
+import type AvatarDetail from "./AvatarDetail"
+import type GameState from "./GameState"
+import type UserCredentials from "./UserCredentials"
 
-export {
+export type  {
     AvatarDetail,
     GameState,
     UserCredentials,

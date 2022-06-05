@@ -1,12 +1,12 @@
 import { UserCredentials } from ".";
 
-export default interface GameState {
+type GameState = {
     hostId: string;
     coHostId: string;
     userList: Map<string, UserCredentials>;
-
 }
 
+export default GameState;
 
 
 

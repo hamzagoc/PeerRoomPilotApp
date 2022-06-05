@@ -18,7 +18,7 @@ function DixitGame() {
     const navigate = useNavigate();
 
     const tryCount = useRef(0);
-    const client = useRef({});
+    const client = useRef<Client>();
 
     //gamestate
     const [gameState, getGameState, setGameState] = useStateWithRef({
@@ -49,11 +49,12 @@ function DixitGame() {
     }
 
     function createRoom(roomId, isRoomCreator) {
-        if (tryCount > 2) {
+        if (tryCount.current > 2) {
             console.log("Maximum attempts reached");
             return;
         }
         isHostRef.current = true;
+        //@ts-ignore
         const room = Room({
             roomId,
             debug: true,
@@ -99,11 +100,9 @@ function DixitGame() {
     }
 
     function createClientAndConnect(roomId) {
-        client.current = Client({
-            metadata: { userCredentials },
-            debug: true,
+        const cl = new Client(userCredentials, true, {
             onClientReady: (id) => {
-                client.current.connectToRoom(roomId);
+                cl.connectToRoom(roomId);
                 if (isHostRef.current) {
                     setGameState(gs => {
                         return { ...gs, hostId: id }
@@ -141,7 +140,7 @@ function DixitGame() {
             onRoomClose: () => {
                 console.log("Host disconnected. Now you are host, room is creating.")
                 const { coHostId } = getGameState();
-                if (coHostId === client.current.getId()) {
+                if (coHostId === cl.peer.id) {
                     setGameState(gs => {
                         const { userList, hostId } = gs;
                         // remove leaved host
@@ -160,7 +159,8 @@ function DixitGame() {
                 }
             }
         });
-        client.current.init();
+        cl.init();
+        client.current = cl;
     }
 
     function handleSendMessage() {
@@ -178,9 +178,10 @@ function DixitGame() {
                     <h1>Dixit Game - {roomName}</h1>
                     <h3>User Count - {userList.length}</h3>
                     <List
+                        // @ts-ignore
                         grid={{ gutter: 24, justifyContent: 'center' }}
                         dataSource={userList}
-                        renderItem={user => (<List.Item key={user.peerId}><AvatarSelector user={user} viewMode /></List.Item>)}
+                        renderItem={(user: any) => (<List.Item key={user.peerId}><AvatarSelector user={user} viewMode /></List.Item>)}
                     />
                     <hr />
                     {JSON.stringify(gameState)}
@@ -191,6 +192,7 @@ function DixitGame() {
     )
 }
 
+// @ts-ignore
 const Loader = styled.div`
     display: flex;
     justify-content: center;

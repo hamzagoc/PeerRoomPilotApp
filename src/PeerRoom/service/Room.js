@@ -9,7 +9,7 @@ function Room({
     onClientConnectedToRoom = (connection) => { },
     onClientConnectionClosed = (connection) => { },
     onDataReceived = (connection, data) => { },
-    onRoomReady = () => { },
+    onRoomReady = (id) => { },
     onBroadcast
 }) {
     var connectedClients = [];
@@ -95,7 +95,7 @@ function Room({
             console.log(message)
     }
 
-    function getConnectedClients(){
+    function getConnectedClients() {
         return connectedClients;
     }
 
