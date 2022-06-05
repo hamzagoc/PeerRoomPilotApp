@@ -4,7 +4,7 @@ import { makeid } from "../../../../util/Util";
 import Room from '../../../../PeerRoom/service/Room';
 import Client from '../../../../PeerRoom/service/Client';
 import SIGNAL from '../../../../PeerRoom/model/Signal';
-import { Spin } from "antd";
+import { Spin, message } from "antd";
 import styled from 'styled-components';
 import { PeerJsError } from "../../../../PeerRoom/constants";
 import { useLocalStorage, useStateWithRef } from "../../../common/hooks";
@@ -21,6 +21,7 @@ function DixitGame() {
 
     //gamestate
     const [gameState, getGameState, setGameState] = useStateWithRef({
+        hostId: "",
         coHostId: "",
         userList: [],
     });
@@ -149,16 +150,19 @@ function DixitGame() {
                 }
             },
             onError: (err) => {
-                console.log({type: err.type, err});
+                console.log({ type: err.type, err });
                 if (PeerJsError.PEER_UNAVAILABLE === err.type) {
-                    console.log("Cannot connect to room. There is no room. Room is creating, you are host. ");
+                    console.log("Cannot connect to room. There is no room.");
+                    message.info('Cannot connect to room. Room not found.');
+                    navigate("/");
+                    return;
                 }
             }
         });
         client.current.init();
     }
 
-    function handleSendMessage(){
+    function handleSendMessage() {
         client.current.sendMessage("Hi");
     }
 
